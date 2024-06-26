@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package SkillBridge.Message;
+
+option csharp_namespace = "SkillBridge.Message";
+option cc_enable_arenas = true;
+
+////////////////////////////////////////////////////////////////
+//
+//  Basic Defines
+//
+////////////////////////////////////////////////////////////////
+enum RESULT
+{
+	SUCCESS = 0;
+	FAILED = 1;
+}
+
+enum CHARACTER_TYPE
+{
+	Player = 0;
+	NPC = 1;
+	Monster = 2;
+}
+
+
+////////////////////////////////////////////////////////////////
+//
+//  Messages
+//
+////////////////////////////////////////////////////////////////
+
+
+message NetMessage{
+	NetMessageRequest Request = 1;
+	NetMessageResponse Response = 2;
+}
+
+message NetMessageRequest{
+
+}
+
+message NetMessageResponse{
+
+}
