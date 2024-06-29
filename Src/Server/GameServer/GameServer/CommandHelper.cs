@@ -15,7 +15,7 @@ namespace GameServer
             bool run = true; // 表示命令行循环是否继续运行
             while (run)
             {
-                Console.Write("> 请输入命令 (exit/help): "); // 提示符
+                Console.Write("> 游戏服务器正在启动中，你可以输入命令来进一步操作游戏服务器 (exit/help): "); // 提示符
                 string line = Console.ReadLine(); // 读取用户输入
                 switch (line.ToLower().Trim()) // 转换输入为小写并去除两端空白
                 {
