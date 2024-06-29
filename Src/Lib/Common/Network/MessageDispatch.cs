@@ -54,7 +54,7 @@ namespace Network
         private void RegisterHandler<TMessage>(IMessageHandler<T, TMessage> handler) where TMessage : class, Google.Protobuf.IMessage
         {
             this.messageHandlers[typeof(TMessage)] = handler;
-            Log.Info($"Handler registered for message type '{typeof(TMessage).Name}'");
+            Log.Info($"处理器已注册消息类型 '{typeof(TMessage).Name}'");
         }
 
         /// <summary>
@@ -74,12 +74,12 @@ namespace Network
             if (this.messageHandlers.TryGetValue(messageType, out var handler))
             {
                 ((IMessageHandler<T, TMessage>)handler).Handle(sender, message);
-                Log.Info($"Message of type '{messageType.Name}' dispatched.");
+                Log.Info($"消息类型 '{messageType.Name}' 已分发。");
             }
             else
             {
                 // 如果找不到对应的处理器，可以记录警告或者抛出异常
-                Log.Warning($"No handler registered for message type '{messageType.Name}'.");
+                Log.Warning($"未注册消息类型 '{messageType.Name}' 的处理器。");
             }
         }
 
@@ -144,7 +144,7 @@ namespace Network
         private void HandleMessage(T sender, SkillBridge.Message.NetMessageResponse message)
         {
             // 处理响应消息的具体逻辑
-            Log.Info($"Processing response message from {sender}");
+            Log.Info($"正在处理来自 {sender} 的响应消息");
 
             // 使用反射动态处理消息
             this.HandleMessageByReflection(sender, message);
@@ -201,7 +201,7 @@ namespace Network
         private void HandleMessage(T sender, SkillBridge.Message.NetMessageRequest message)
         {
             // 处理请求消息的具体逻辑
-            Log.Info($"Processing request message from {sender}");
+            Log.Info($"正在处理来自 {sender} 的请求消息");
 
             // 使用反射动态处理消息
             this.HandleMessageByReflection(sender, message);

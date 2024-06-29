@@ -130,14 +130,14 @@ namespace Network
                     }
                     catch (System.Exception ex)
                     {
-                        Log.ErrorFormat("Message handler exception:{0}, {1}, {2}, {3}", ex.InnerException, ex.Message, ex.Source, ex.StackTrace);
+                        Log.ErrorFormat("消息处理异常：内部异常：{0}，消息：{1}，来源：{2}，堆栈跟踪：{3}", ex.InnerException, ex.Message, ex.Source, ex.StackTrace);
                         if (ThrowException)
                             throw ex;
                     }
                 }
                 else
                 {
-                    Log.Warning("No handler subscribed for {0}" + msg.ToString());
+                    Log.Warning($"未订阅处理程序：{msg.ToString()}");
                 }
             }
         }
@@ -247,7 +247,7 @@ namespace Network
         /// <param name="stateInfo">线程状态信息</param>
         private void MessageDistribute(Object stateInfo)
         {
-            Log.Warning("MessageDistribute thread start");
+            Log.Warning("消息分发线程启动");
             try
             {
                 ActiveThreadCount = Interlocked.Increment(ref ActiveThreadCount);
@@ -283,7 +283,7 @@ namespace Network
             finally
             {
                 ActiveThreadCount = Interlocked.Decrement(ref ActiveThreadCount);
-                Log.Warning("MessageDistribute thread end");
+                Log.Warning("消息分发线程结束");
             }
         }
     }
