@@ -29,7 +29,7 @@ namespace Network
         /// </summary>
         public MessageDispatch()
         {
-            InitializeMessageHandlers();
+            this.InitializeMessageHandlers();
         }
 
         #endregion
@@ -41,8 +41,8 @@ namespace Network
         /// </summary>
         private void InitializeMessageHandlers()
         {
-            RegisterHandler(new NetMessageResponseHandler<T>());
-            RegisterHandler(new NetMessageRequestHandler<T>());
+            this.RegisterHandler(new NetMessageResponseHandler<T>());
+            this.RegisterHandler(new NetMessageRequestHandler<T>());
             // 如果有更多的消息类型，继续在这里注册处理器
         }
 
@@ -53,7 +53,7 @@ namespace Network
         /// <param name="handler">处理器实例</param>
         private void RegisterHandler<TMessage>(IMessageHandler<T, TMessage> handler) where TMessage : class, Google.Protobuf.IMessage
         {
-            messageHandlers[typeof(TMessage)] = handler;
+            this.messageHandlers[typeof(TMessage)] = handler;
             Log.Info($"Handler registered for message type '{typeof(TMessage).Name}'");
         }
 
@@ -71,7 +71,7 @@ namespace Network
             }
 
             Type messageType = typeof(TMessage);
-            if (messageHandlers.TryGetValue(messageType, out var handler))
+            if (this.messageHandlers.TryGetValue(messageType, out var handler))
             {
                 ((IMessageHandler<T, TMessage>)handler).Handle(sender, message);
                 Log.Info($"Message of type '{messageType.Name}' dispatched.");
@@ -133,7 +133,7 @@ namespace Network
         /// <param name="message">响应消息对象</param>
         public void Handle(T sender, SkillBridge.Message.NetMessageResponse message)
         {
-            HandleMessage(sender, message);
+            this.HandleMessage(sender, message);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Network
             Log.Info($"Processing response message from {sender}");
 
             // 使用反射动态处理消息
-            HandleMessageByReflection(sender, message);
+            this.HandleMessageByReflection(sender, message);
         }
 
         /// <summary>
@@ -190,7 +190,7 @@ namespace Network
         /// <param name="message">请求消息对象</param>
         public void Handle(T sender, SkillBridge.Message.NetMessageRequest message)
         {
-            HandleMessage(sender, message);
+            this.HandleMessage(sender, message);
         }
 
         /// <summary>
@@ -204,7 +204,7 @@ namespace Network
             Log.Info($"Processing request message from {sender}");
 
             // 使用反射动态处理消息
-            HandleMessageByReflection(sender, message);
+            this.HandleMessageByReflection(sender, message);
         }
 
         /// <summary>
