@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Network;
+using System;
 using System.Threading;
 
 namespace GameServer
@@ -10,6 +11,7 @@ namespace GameServer
     {
         private Thread thread; // 服务器运行线程
         private bool running = false; // 服务器运行状态
+        NetService netService;
 
         /// <summary>
         /// 初始化服务器，创建运行线程。
@@ -17,6 +19,10 @@ namespace GameServer
         /// <returns>初始化成功返回 true。</returns>
         public bool Init()
         {
+            int Port = Properties.Settings.Default.ServerPort;
+            netService = new NetService();
+            netService.Init(Port);
+
             thread = new Thread(new ThreadStart(this.Update)); // 创建新的线程运行Update方法
             return true;
         }
