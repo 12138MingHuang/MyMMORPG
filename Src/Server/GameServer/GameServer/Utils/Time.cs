@@ -6,14 +6,30 @@ using System.Runtime.InteropServices;
 /// </summary>
 class Time
 {
-    // 从kernel32.dll中导入QueryPerformanceCounter函数
+    /// <summary>
+    /// 从kernel32.dll中导入QueryPerformanceCounter函数。
+    /// 该函数用于检索当前的高分辨率性能计数器的值。
+    /// 高分辨率性能计数器的值以系统启动后的时间为基准，单位为计数器滴答。
+    /// </summary>
+    /// <param name="lpPerformanceCount">输出参数，用于存储当前性能计数器的值。</param>
+    /// <returns>如果函数成功，则返回true；否则返回false。</returns>
     [DllImport("kernel32.dll")]
     static extern bool QueryPerformanceCounter([In, Out] ref long lpPerformanceCount);
 
-    // 从kernel32.dll中导入QueryPerformanceFrequency函数
+    /// <summary>
+    /// 从kernel32.dll中导入QueryPerformanceFrequency函数。
+    /// 该函数用于检索高分辨率性能计数器的频率（每秒的滴答数）。
+    /// 频率用于将性能计数器的值转换为时间单位（秒或毫秒）。
+    /// </summary>
+    /// <param name="lpFrequency">输出参数，用于存储性能计数器的频率（每秒的滴答数）。</param>
+    /// <returns>如果函数成功，则返回true；否则返回false。</returns>
     [DllImport("kernel32.dll")]
     static extern bool QueryPerformanceFrequency([In, Out] ref long lpFrequency);
 
+
+    /// <summary>
+    /// 类的静态构造函数，初始化计时器频率和启动时的滴答数
+    /// </summary>
     static Time()
     {
         startupTicks = ticks;
