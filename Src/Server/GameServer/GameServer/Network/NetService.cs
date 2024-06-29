@@ -37,6 +37,8 @@ namespace Network
             Log.Warning("启动监听...");
             ServerListener.Start();
 
+            Log.Warning("开始启动网络服务...");
+
             // 启动消息分发器
             MessageDistributer<NetConnection<NetSession>>.Instance.Start(8);
             Log.Warning("网络服务启动成功");
@@ -47,14 +49,15 @@ namespace Network
         /// </summary>
         public void Stop()
         {
+            Log.Warning("停止监听...");
             Log.Warning("停止网络服务...");
 
             // 停止监听
             ServerListener.Stop();
 
             // 停止消息处理器
-            Log.Warning("停止消息处理器...");
             MessageDistributer<NetConnection<NetSession>>.Instance.Stop();
+            Log.Warning("网络服务停止成功");
         }
 
         /// <summary>

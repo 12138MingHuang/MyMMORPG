@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -161,7 +162,7 @@ namespace Network
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.ToString());
+                Log.Info(e.ToString());
             }
         }
         #endregion

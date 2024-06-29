@@ -215,6 +215,7 @@ namespace Network
             if (this.ThreadCount < 1) this.ThreadCount = 1;
             if (this.ThreadCount > 1000) this.ThreadCount = 1000;
             Running = true;
+            Log.WarningFormat("开始启动 [{0}] 个消息分发线程...", this.ThreadCount);
             for (int i = 0; i < this.ThreadCount; i++)
             {
                 ThreadPool.QueueUserWorkItem(new WaitCallback(MessageDistribute));
@@ -231,6 +232,7 @@ namespace Network
         /// </summary>
         public void Stop()
         {
+            Log.WarningFormat("开始结束 [{0}] 个消息分发线程...", this.ThreadCount);
             Running = false;
             this.messageQueue.Clear();
             while (ActiveThreadCount > 0)

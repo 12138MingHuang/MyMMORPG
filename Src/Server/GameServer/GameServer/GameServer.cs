@@ -1,4 +1,5 @@
-﻿using Network;
+﻿using Common;
+using Network;
 using System;
 using System.Threading;
 
@@ -11,7 +12,7 @@ namespace GameServer
     {
         private Thread thread; // 服务器运行线程
         private bool running = false; // 服务器运行状态
-        NetService netService;
+        NetService netService; // 网络服务器
 
         /// <summary>
         /// 初始化服务器，创建运行线程。
@@ -32,6 +33,7 @@ namespace GameServer
         /// </summary>
         public void Start()
         {
+            netService.Start(); // 启动网络服务器
             running = true; // 设置运行状态为 true
             thread.Start(); // 启动线程
         }
@@ -45,6 +47,7 @@ namespace GameServer
             {
                 Time.Tick(); // 调用时间更新方法
                 Thread.Sleep(1000); // 休眠1秒
+                //Log.Info($"时间增量：{Time.deltaTime}, 帧数：{Time.frameCount}, 时钟周期数：{Time.ticks}, 游戏运行时间：{Time.time}, 真实时间运行时长：{Time.realtimeSinceStartup}");
             }
         }
 
@@ -55,6 +58,7 @@ namespace GameServer
         {
             running = false; // 设置运行状态为 false
             thread.Join(); // 等待线程结束
+            netService.Stop(); // 停止网络服务器
         }
     }
 }

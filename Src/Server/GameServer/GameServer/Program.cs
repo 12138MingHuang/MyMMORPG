@@ -19,7 +19,7 @@ namespace GameServer
                 // 检查log4net配置文件是否存在
                 if (!fi.Exists)
                 {
-                    Console.WriteLine("log4net.xml 配置文件不存在: " + configFilePath);
+                    Log.Info("log4net.xml 配置文件不存在: " + configFilePath);
                     return;
                 }
 
@@ -44,24 +44,23 @@ namespace GameServer
                 }
 
                 // 初始化并启动GameServer
-                //GameServer server = new GameServer();
-                //server.Init();
-                //server.Start();
-                //Console.WriteLine("Game Server Running......");
+                GameServer server = new GameServer();
+                server.Init();
+                server.Start();
+                Log.Info("Game Server Running......");
 
                 // 运行命令行助手
                 CommandHelper.Run();
 
                 // 记录GameServer退出日志并停止服务器
                 Log.Info("Game Server Exiting...");
-                //server.Stop();
+                server.Stop();
                 Log.Info("Game Server Exited");
             }
             catch (Exception ex)
             {
                 // 捕获并记录异常
-                Console.WriteLine("异常: " + ex.Message);
-                Log.Error("异常: " + ex.Message);
+                Log.Error("Error: " + ex.Message);
             }
         }
     }
