@@ -184,7 +184,7 @@ namespace Network
 
             while (this.messageQueue.Count > 0)
             {
-                dynamic package = this.messageQueue.Dequeue();
+                MessageArgs<Google.Protobuf.IMessage> package = this.messageQueue.Dequeue();
                 if (package.message != null)
                 {
                     // 使用通用的 Dispatch 方法来分发消息
@@ -260,7 +260,7 @@ namespace Network
                         threadEvent.WaitOne();
                         continue;
                     }
-                    dynamic package = this.messageQueue.Dequeue();
+                    MessageArgs<Google.Protobuf.IMessage> package = this.messageQueue.Dequeue();
                     if (package.message != null)
                     {
                         // 使用通用的 Dispatch 方法来分发消息
@@ -279,8 +279,9 @@ namespace Network
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                Log.ErrorFormat("消息分发线程异常：{0}", ex.Message);
             }
             finally
             {
