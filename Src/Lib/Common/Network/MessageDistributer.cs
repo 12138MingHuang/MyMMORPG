@@ -23,11 +23,11 @@ namespace Network
         /// <summary>
         /// 消息参数类，封装了消息发送者和消息内容
         /// </summary>
-        /// <typeparam name="TMessage">消息类型</typeparam>
-        class MessageArgs<TMessage> where TMessage : class, Google.Protobuf.IMessage
+        /// <typeparam name="Tm">消息类型</typeparam>
+        class MessageArgs<Tm> where Tm : class, Google.Protobuf.IMessage
         {
             public T sender;
-            public TMessage message;
+            public Tm message;
         }
 
         /// <summary>
@@ -145,13 +145,13 @@ namespace Network
         /// <summary>
         /// 接收消息
         /// </summary>
-        /// <typeparam name="TMessage">消息类型</typeparam>
+        /// <typeparam name="Tm">消息类型</typeparam>
         /// <param name="sender">消息发送者</param>
         /// <param name="message">消息内容</param>
-        public void ReceiveMessage<TMessage>(T sender, TMessage message) where TMessage : class, Google.Protobuf.IMessage
+        public void ReceiveMessage<Tm>(T sender, Tm message) where Tm : class, Google.Protobuf.IMessage
         {
             // 创建消息参数对象并入队
-            var messageArgs = new MessageArgs<TMessage>
+            var messageArgs = new MessageArgs<Tm>
             {
                 sender = sender,
                 message = message
