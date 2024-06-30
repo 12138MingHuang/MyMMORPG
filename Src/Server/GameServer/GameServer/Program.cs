@@ -12,8 +12,8 @@ namespace GameServer
         {
             try
             {
-                // 定义log4net配置文件的路径
-                string configFilePath = @"D:\MyUnityProject\MyMMORPG\Src\Server\GameServer\GameServer\log4net.xml";
+                // 使用相对路径加载log4net配置文件
+                string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.xml");
                 FileInfo fi = new FileInfo(configFilePath);
 
                 // 检查log4net配置文件是否存在
