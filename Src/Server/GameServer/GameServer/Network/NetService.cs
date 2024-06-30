@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using GameServer;
 using Common;
+using SkillBridge.Message;
 
 namespace Network
 {
@@ -103,7 +104,7 @@ namespace Network
             // 由包处理器处理封包
             lock (sender.packageHandler)
             {
-                sender.packageHandler.ReceiveData(e.Data, 0, e.Data.Length);
+                sender.packageHandler.ReceiveData<NetMessage>(e.Data, 0, e.Data.Length);
             }
         }
     }

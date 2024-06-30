@@ -151,7 +151,7 @@ namespace Network
         public void ReceiveMessage<Tm>(T sender, Tm message) where Tm : class, Google.Protobuf.IMessage
         {
             // 创建消息参数对象并入队
-            var messageArgs = new MessageArgs<Tm>
+            MessageArgs<Tm> messageArgs = new MessageArgs<Tm>
             {
                 sender = sender,
                 message = message

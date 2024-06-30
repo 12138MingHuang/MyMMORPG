@@ -53,12 +53,14 @@ namespace Network
         }
 
         /// <summary>
-        /// 接收数据到PackageHandler。
+        /// 接收数据到 PackageHandler。
         /// </summary>
+        /// <typeparam name="Tm">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
         /// <param name="data">接收的数据</param>
         /// <param name="offset">数据偏移量</param>
         /// <param name="count">数据长度</param>
-        public void ReceiveData(byte[] data, int offset, int count)
+        /// <exception cref="Exception">如果写入缓冲区溢出或解析数据包失败，抛出异常</exception>
+        public void ReceiveData<Tm>(byte[] data, int offset, int count) where Tm : class, IMessage<Tm>, new()
         {
             // 检查写入缓冲区是否会溢出
             if (stream.Position + count > stream.Capacity)
@@ -69,24 +71,34 @@ namespace Network
             stream.Write(data, offset, count);
 
             // 解析数据包
-            ParsePackage();
+            bool result = ParsePackage<Tm>();
+            if (!result)
+            {
+                throw new Exception("Failed to parse package.");
+            }
         }
+
 
         /// <summary>
         /// 打包消息。
         /// </summary>
+        /// <typeparam name="TMessage">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
         /// <param name="message">要打包的消息</param>
-        /// <returns>打包后的字节数组</returns>
-        public static byte[] PackMessage(SkillBridge.Message.NetMessage message)
+        /// <returns>打包后的字节数组，包含消息长度和消息内容</returns>
+        public static byte[] PackMessage<TMessage>(TMessage message) where TMessage : class, IMessage
         {
             byte[] package = null;
             using (MemoryStream ms = new MemoryStream())
             {
                 // 使用Google.Protobuf序列化消息
                 message.WriteTo(ms);
+
+                // 创建包含消息长度和内容的字节数组
                 package = new byte[ms.Length + 4];
+
                 // 将消息长度写入前四个字节
-                Buffer.BlockCopy(BitConverter.GetBytes(ms.Length), 0, package, 0, 4);
+                Buffer.BlockCopy(BitConverter.GetBytes((int)ms.Length), 0, package, 0, 4);
+
                 // 将消息内容写入后续字节
                 Buffer.BlockCopy(ms.GetBuffer(), 0, package, 4, (int)ms.Length);
             }
@@ -96,17 +108,18 @@ namespace Network
         /// <summary>
         /// 解包消息。
         /// </summary>
+        /// <typeparam name="Tm">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
         /// <param name="packet">接收到的数据包</param>
         /// <param name="offset">数据偏移量</param>
         /// <param name="length">数据长度</param>
         /// <returns>解包后的消息</returns>
-        public static SkillBridge.Message.NetMessage UnpackMessage(byte[] packet, int offset, int length)
+        public static Tm UnpackMessage<Tm>(byte[] packet, int offset, int length) where Tm : class, IMessage<Tm>, new()
         {
-            SkillBridge.Message.NetMessage message = null;
+            Tm message = new Tm();
             using (MemoryStream ms = new MemoryStream(packet, offset, length))
             {
                 // 使用Google.Protobuf反序列化消息
-                message = SkillBridge.Message.NetMessage.Parser.ParseFrom(ms);
+                message.MergeFrom(ms);
             }
             return message;
         }
@@ -114,8 +127,9 @@ namespace Network
         /// <summary>
         /// 解析数据包。
         /// </summary>
+        /// <typeparam name="Tm">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
         /// <returns>解析成功返回true</returns>
-        private bool ParsePackage()
+        private bool ParsePackage<Tm>() where Tm : class, IMessage<Tm>, new()
         {
             // 检查是否有完整的数据包（包头大小是4字节）
             if (readOffset + 4 < stream.Position)
@@ -125,17 +139,17 @@ namespace Network
                 if (packageSize + readOffset + 4 <= stream.Position)
                 {
                     // 解析数据包
-                    SkillBridge.Message.NetMessage message = UnpackMessage(stream.GetBuffer(), this.readOffset + 4, packageSize);
+                    Tm message = UnpackMessage<Tm>(stream.GetBuffer(), this.readOffset + 4, packageSize);
                     if (message == null)
                     {
                         throw new Exception("PackageHandler ParsePackage failed, invalid package");
                     }
-                    // 分发消息
+                    // 接收消息
                     MessageDistributer<T>.Instance.ReceiveMessage(this.sender, message);
                     // 更新读取偏移量
                     this.readOffset += (packageSize + 4);
                     // 递归解析下一个包
-                    return ParsePackage();
+                    return ParsePackage<Tm>();
                 }
             }
 
