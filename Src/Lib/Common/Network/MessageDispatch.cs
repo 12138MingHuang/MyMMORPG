@@ -146,8 +146,14 @@ namespace Network
             // 处理响应消息的具体逻辑
             Log.Info($"正在处理来自 {sender} 的响应消息");
 
-            // 使用反射动态处理消息
-            this.HandleMessageByReflection(sender, message);
+            //// 使用反射动态处理消息
+            //this.HandleMessageByReflection(sender, message);
+
+            // 具体的处理逻辑在这里实现
+            if (message.FirstTestResponse != null)
+            {
+                MessageDistributer<T>.Instance.RaiseEvent(sender, message.FirstTestResponse);
+            }
         }
 
         /// <summary>
@@ -203,8 +209,14 @@ namespace Network
             // 处理请求消息的具体逻辑
             Log.Info($"正在处理来自 {sender} 的请求消息");
 
-            // 使用反射动态处理消息
-            this.HandleMessageByReflection(sender, message);
+            //// 使用反射动态处理消息
+            //this.HandleMessageByReflection(sender, message);
+
+            // 具体的处理逻辑在这里实现
+            if (message.FirstTestRequest != null)
+            {
+                MessageDistributer<T>.Instance.RaiseEvent(sender, message.FirstTestRequest);
+            }
         }
 
         /// <summary>
