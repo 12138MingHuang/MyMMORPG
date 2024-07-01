@@ -1,0 +1,72 @@
+﻿<log4net>
+	<!-- 根日志记录器定义 -->
+	<root>
+		<!-- 设置根日志记录器的输出级别为 DEBUG -->
+		<level value="DEBUG" />
+		<!-- 引用名为 "LogFileAppender" 和 "ColoredConsoleAppender" 的日志 appender -->
+		<appender-ref ref="LogFileAppender" />
+		<appender-ref ref="ColoredConsoleAppender" />
+		<!-- 注释掉的 "UnityAppender" 不会被使用 -->
+		<!-- <appender-ref ref="UnityAppender" /> -->
+	</root>
+
+	<!-- 定义名为 "LogFileAppender" 的 RollingFileAppender -->
+	<appender name="LogFileAppender" type="log4net.Appender.RollingFileAppender">
+		<!-- 指定日志文件的路径和文件名 -->
+		<param name="File" value="Log/log.log" />
+		<!-- 设置为 false，表示每次重新启动时不追加到现有文件 -->
+		<param name="AppendToFile" value="false" />
+		<!-- 设置日志文件的滚动方式为按大小滚动 -->
+		<rollingStyle value="Size" />
+		<!-- 设置最大的备份日志文件的数量 -->
+		<maxSizeRollBackups value="10" />
+		<!-- 设置单个日志文件的最大大小 -->
+		<maximumFileSize value="1MB" />
+		<!-- 设置日志文件名为静态的 -->
+		<staticLogFileName value="true" />
+		<!-- 定义日志消息的布局格式 -->
+		<layout type="log4net.Layout.PatternLayout">
+			<!-- 设置日志消息的转换模式 -->
+			<conversionPattern value="%date [%2thread] %-5level %logger: %message%newline" />
+		</layout>
+	</appender>
+
+	<!-- 定义名为 "RollingLogFileAppender" 的 RollingFileAppender -->
+	<appender name="RollingLogFileAppender" type="log4net.Appender.RollingFileAppender">
+		<!-- 指定日志文件的存放位置 -->
+		<file value="Log\\" />
+		<!-- 设置为 true，表示日志追加到现有文件中 -->
+		<appendToFile value="true" />
+		<!-- 设置日志文件的滚动方式为按日期滚动 -->
+		<rollingStyle value="Date" />
+		<!-- 设置日志文件名的日期格式 -->
+		<datePattern value="yyyyMMdd'.txt'" />
+		<!-- 设置日志文件名不为静态 -->
+		<staticLogFileName value="false" />
+		<!-- 设置最大的备份日志文件的数量 -->
+		<param name="MaxSizeRollBackups" value="100" />
+		<!-- 定义日志消息的布局格式 -->
+		<layout type="log4net.Layout.PatternLayout">
+			<!-- 设置日志消息的转换模式 -->
+			<conversionPattern value="%newline%date [%thread] [%-5level] [%logger] ：%message" />
+		</layout>
+	</appender>
+
+	<!-- 定义名为 "ColoredConsoleAppender" 的 ConsoleAppender -->
+	<appender name="ColoredConsoleAppender" type="log4net.Appender.ConsoleAppender">
+		<!-- 定义日志消息的布局格式 -->
+		<layout type="log4net.Layout.PatternLayout">
+			<!-- 设置日志消息的转换模式 -->
+			<conversionPattern value="%date [%thread] %-5level %logger: %message%newline" />
+		</layout>
+	</appender>
+
+	<!-- 定义名为 "UnityAppender" 的 UnityAppender -->
+	<appender name="UnityAppender" type="log4net.Appender.UnityAppender">
+		<!-- 定义日志消息的布局格式 -->
+		<layout type="log4net.Layout.PatternLayout">
+			<!-- 设置日志消息的转换模式 -->
+			<conversionPattern value="%date [%thread] %-5level %logger: %message%newline" />
+		</layout>
+	</appender>
+</log4net>
