@@ -150,10 +150,10 @@ namespace Network
             //this.HandleMessageByReflection(sender, message);
 
             // 具体的处理逻辑在这里实现
-            //if (message.FirstTestResponse != null)
-            //{
-            //    MessageDistributer<T>.Instance.RaiseEvent(sender, message.FirstTestResponse);
-            //}
+            if (message.MyFirstResponse != null)
+            {
+                MessageDistributer<T>.Instance.RaiseEvent(sender, message.MyFirstResponse);
+            }
         }
 
         /// <summary>
@@ -213,10 +213,10 @@ namespace Network
             //this.HandleMessageByReflection(sender, message);
 
             // 具体的处理逻辑在这里实现
-            //if (message.FirstTestRequest != null)
-            //{
-            //    MessageDistributer<T>.Instance.RaiseEvent(sender, message.FirstTestRequest);
-            //}
+            if (message.MyFirstRequest != null)
+            {
+                MessageDistributer<T>.Instance.RaiseEvent(sender, message.MyFirstRequest);
+            }
         }
 
         /// <summary>

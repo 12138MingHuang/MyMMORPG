@@ -37,9 +37,17 @@ message NetMessage{
 }
 
 message NetMessageRequest{
-
+	FirstTestRequest myFirstRequest = 1;
 }
 
 message NetMessageResponse{
+	FirstTestResponse myFirstResponse = 1;
+}
 
+message FirstTestRequest{
+	string myFirstRequestVar = 1;
+}
+
+message FirstTestResponse{
+	string myFirstResponseVar = 1;
 }

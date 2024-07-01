@@ -1,4 +1,5 @@
 ﻿using Common;
+using GameServer.Servers;
 using Network;
 using System;
 using System.Threading;
@@ -23,6 +24,7 @@ namespace GameServer
             int Port = Properties.Settings.Default.ServerPort;
             netService = new NetService();
             netService.Init(Port);
+            FirstServer.Instance.Init();
 
             thread = new Thread(new ThreadStart(this.Update)); // 创建新的线程运行Update方法
             return true;
