@@ -5,10 +5,6 @@
 /// <typeparam name="T">希望实现单例模式的类型。必须有一个无参构造函数。</typeparam>
 public class Singleton<T> where T : new()
 {
-    /// <summary>
-    /// 私有构造函数，防止外部实例化
-    /// </summary>
-    private Singleton() { }
 
     /// <summary>
     /// 存储单例实例的私有静态字段。
