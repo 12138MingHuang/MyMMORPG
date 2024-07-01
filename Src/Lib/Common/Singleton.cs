@@ -13,6 +13,11 @@ namespace Common
     public class Singleton<T> where T : new() //类型参数T必须有一个无参构造函数
     {
         /// <summary>
+        /// 私有构造函数，防止外部实例化
+        /// </summary>
+        private Singleton() { }
+
+        /// <summary>
         /// 存储单例实例的私有静态字段。
         /// </summary>
         private static T instance;

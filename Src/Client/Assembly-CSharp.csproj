@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Assets\Scripts\NewBehaviourScript.cs" />
     <Compile Include="Assets\Scripts\Log\UnityLogger.cs" />
+    <Compile Include="Assets\Scripts\Utilities\Singleton.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
