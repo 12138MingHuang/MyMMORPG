@@ -82,10 +82,10 @@ namespace Network
         /// <summary>
         /// 打包消息。
         /// </summary>
-        /// <typeparam name="TMessage">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
+        /// <typeparam name="Tm">消息的类型，必须实现 Google.Protobuf.IMessage 接口</typeparam>
         /// <param name="message">要打包的消息</param>
         /// <returns>打包后的字节数组，包含消息长度和消息内容</returns>
-        public static byte[] PackMessage<TMessage>(TMessage message) where TMessage : class, IMessage
+        public static byte[] PackMessage<Tm>(Tm message) where Tm : class, IMessage
         {
             byte[] package = null;
             using (MemoryStream ms = new MemoryStream())
