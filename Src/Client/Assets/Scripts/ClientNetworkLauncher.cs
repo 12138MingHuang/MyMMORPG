@@ -11,11 +11,11 @@ public class ClientNetworkLauncher : MonoBehaviour
     private void Awake()
     {
         // 获取 log4net.xml 文件的正确路径
-        string projectRootPath = Application.dataPath;  // 获取项目Assets目录
+        string projectRootPath = Application.dataPath;  // 获取项目根目录
         string log4netConfigPath = Path.Combine(projectRootPath, "log4net.xml").Replace("\\", "/");  // 构建 log4net.xml 文件的完整路径
 
         // 检查并创建日志目录
-        string logDirectory = Path.Combine(projectRootPath, "Log").Replace("\\", "/");
+        string logDirectory = Path.Combine(projectRootPath.Replace("/Assets", ""), "Log").Replace("\\", "/");
         if (!Directory.Exists(logDirectory))
         {
             Directory.CreateDirectory(logDirectory);
