@@ -179,6 +179,8 @@ namespace Network
                 Socket socket = (args.UserToken as State).socket;
                 if (socket.Connected)
                 {
+                    // 在开始异步接收前，可以尝试获取远程端点信息
+                    args.RemoteEndPoint = socket.RemoteEndPoint as IPEndPoint;
                     args.AcceptSocket.ReceiveAsync(args);
                 }
             }

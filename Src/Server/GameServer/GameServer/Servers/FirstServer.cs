@@ -25,7 +25,7 @@ namespace GameServer.Servers
         {
             sender.Session.Response.MyFirstResponse = new FirstTestResponse();
 
-            Log.InfoFormat("客户端发来的消息是：{0}", sender.Session.Response.MyFirstResponse.MyFirstResponseVar);
+            Log.InfoFormat("客户端发来的消息是：{0}", message.MyFirstRequestVar);
         }
     }
 }
