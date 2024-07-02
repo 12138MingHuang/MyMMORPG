@@ -62,6 +62,8 @@
     <Compile Include="Log.cs" />
     <Compile Include="Network\MessageDispatch.cs" />
     <Compile Include="Network\MessageDistributer.cs" />
+    <Compile Include="Network\MessageHandlerBase.cs" />
+    <Compile Include="Network\NetMessageHandlers.cs" />
     <Compile Include="Network\PackageHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

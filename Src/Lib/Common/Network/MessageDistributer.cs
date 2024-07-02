@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Common;
 
@@ -21,19 +23,34 @@ namespace Network
     public class MessageDistributer<T> : Singleton<MessageDistributer<T>>
     {
         /// <summary>
+        /// 消息参数基类，封装了消息发送者和消息内容
+        /// </summary>
+        class MessageArgs
+        {
+            public T sender;
+            public Google.Protobuf.IMessage message;
+        }
+
+        /// <summary>
         /// 消息参数类，封装了消息发送者和消息内容
         /// </summary>
         /// <typeparam name="Tm">消息类型</typeparam>
-        class MessageArgs<Tm> where Tm : class, Google.Protobuf.IMessage
+        class MessageArgs<Tm> : MessageArgs where Tm : Google.Protobuf.IMessage
         {
-            public T sender;
-            public Tm message;
+            public new Tm message;
+
+            public MessageArgs(T sender, Tm message)
+            {
+                this.sender = sender;
+                this.message = message;
+                base.message = message;
+            }
         }
 
         /// <summary>
         /// 消息队列，用于存储接收到的消息。
         /// </summary>
-        private Queue<MessageArgs<Google.Protobuf.IMessage>> messageQueue = new Queue<MessageArgs<Google.Protobuf.IMessage>>();
+        private Queue<MessageArgs> messageQueue = new Queue<MessageArgs>();
 
         /// <summary>
         /// 消息处理器委托，定义处理消息的函数。
@@ -47,6 +64,11 @@ namespace Network
         /// 消息处理器字典，按消息类型存储处理器。
         /// </summary>
         private Dictionary<string, System.Delegate> messageHandlers = new Dictionary<string, System.Delegate>();
+
+        /// <summary>
+        /// 缓存每个消息类型相关的属性，用于提高反射性能。
+        /// </summary>
+        private static readonly Dictionary<Type, PropertyInfo[]> relevantPropertiesCache = new Dictionary<Type, PropertyInfo[]>();
 
         /// <summary>
         /// 运行标志，用于控制消息处理器的运行状态。
@@ -151,12 +173,8 @@ namespace Network
         public void ReceiveMessage<Tm>(T sender, Tm message) where Tm : class, Google.Protobuf.IMessage
         {
             // 创建消息参数对象并入队
-            MessageArgs<Tm> messageArgs = new MessageArgs<Tm>
-            {
-                sender = sender,
-                message = message
-            };
-            this.messageQueue.Enqueue(messageArgs as MessageArgs<Google.Protobuf.IMessage>); // 显式转换为基类类型
+            MessageArgs<Tm> messageArgs = new MessageArgs<Tm>(sender, message);
+            this.messageQueue.Enqueue(messageArgs);
 
             // 设置线程事件，通知处理器有新消息
             threadEvent.Set();
@@ -184,22 +202,37 @@ namespace Network
 
             while (this.messageQueue.Count > 0)
             {
-                MessageArgs<Google.Protobuf.IMessage> package = this.messageQueue.Dequeue();
+                MessageArgs package = this.messageQueue.Dequeue();
                 if (package.message != null)
                 {
-                    // 使用通用的 Dispatch 方法来分发消息
-                    MessageDispatch<T>.Instance.Dispatch(package.sender, package.message);
-                    //if (package.message is SkillBridge.Message.NetMessageRequest)
+                    //// 使用预先构建的属性列表进行消息分发
+                    //Type messageType = package.message.GetType();
+                    //PropertyInfo[] properties = GetRelevantProperties(messageType);
+                    ////PropertyInfo[] properties = messageType.GetProperties();
+
+                    //foreach (var property in properties)
                     //{
-                    //    var request = package.message as SkillBridge.Message.NetMessageRequest;
-                    //    MessageDispatch<T>.Instance.Dispatch(package.sender, request);
+                    //    var value = property.GetValue(package.message, null);
+                    //    if (value != null)
+                    //    {
+                    //        Type eventType = value.GetType();
+                    //        MethodInfo method = typeof(MessageDispatch<T>).GetMethod("Dispatch");
+                    //        MethodInfo genericMethod = method.MakeGenericMethod(eventType);
+                    //        genericMethod.Invoke(MessageDispatch<T>.Instance, new object[] { package.sender, value });
+                    //    }
                     //}
-                    //else if (package.message is SkillBridge.Message.NetMessageResponse)
-                    //{
-                    //    var response = package.message as SkillBridge.Message.NetMessageResponse;
-                    //    MessageDispatch<T>.Instance.Dispatch(package.sender, response);
-                    //}
-                    //// 可以根据需要添加其他消息类型的处理
+
+                    if (package.message != null && package.message is SkillBridge.Message.NetMessage)
+                    {
+                        SkillBridge.Message.NetMessageRequest request = (package.message as SkillBridge.Message.NetMessage).Request;
+                        MessageDispatch<T>.Instance.Dispatch(package.sender, request);
+                    }
+                    else if (package.message != null && package.message is SkillBridge.Message.NetMessage)
+                    {
+                        SkillBridge.Message.NetMessageResponse response = (package.message as SkillBridge.Message.NetMessage).Response;
+                        MessageDispatch<T>.Instance.Dispatch(package.sender, response);
+                    }
+                    // 可以根据需要添加其他消息类型的处理
                 }
             }
         }
@@ -260,28 +293,45 @@ namespace Network
                         threadEvent.WaitOne();
                         continue;
                     }
-                    MessageArgs<Google.Protobuf.IMessage> package = this.messageQueue.Dequeue();
+
+                    MessageArgs package = this.messageQueue.Dequeue();
                     if (package.message != null)
                     {
-                        // 使用通用的 Dispatch 方法来分发消息
-                        MessageDispatch<T>.Instance.Dispatch(package.sender, package.message);
-                        //if (package.message is SkillBridge.Message.NetMessageRequest)
+                        //// 使用预先构建的属性列表进行消息分发
+                        //Type messageType = package.message.GetType();
+                        //PropertyInfo[] properties = GetRelevantProperties(messageType);
+                        ////PropertyInfo[] properties = messageType.GetProperties();
+
+                        //foreach (var property in properties)
                         //{
-                        //    var request = package.message as SkillBridge.Message.NetMessageRequest;
-                        //    MessageDispatch<T>.Instance.Dispatch(package.sender, request);
+                        //    var value = property.GetValue(package.message, null);
+                        //    if (value != null)
+                        //    {
+                        //        Type eventType = value.GetType();
+                        //        MethodInfo method = typeof(MessageDispatch<T>).GetMethod("Dispatch");
+                        //        MethodInfo genericMethod = method.MakeGenericMethod(eventType);
+                        //        genericMethod.Invoke(MessageDispatch<T>.Instance, new object[] { package.sender, value });
+                        //    }
                         //}
-                        //else if (package.message is SkillBridge.Message.NetMessageResponse)
-                        //{
-                        //    var response = package.message as SkillBridge.Message.NetMessageResponse;
-                        //    MessageDispatch<T>.Instance.Dispatch(package.sender, response);
-                        //}
-                        //// 可以根据需要添加其他消息类型的处理
+
+                        if (package.message != null && package.message is SkillBridge.Message.NetMessage)
+                        {
+                            SkillBridge.Message.NetMessageRequest request = (package.message as SkillBridge.Message.NetMessage).Request;
+                            MessageDispatch<T>.Instance.Dispatch(package.sender, request);
+                        }
+                        else if (package.message != null && package.message is SkillBridge.Message.NetMessage)
+                        {
+                            SkillBridge.Message.NetMessageResponse response = (package.message as SkillBridge.Message.NetMessage).Response;
+                            MessageDispatch<T>.Instance.Dispatch(package.sender, response);
+                        }
+                        // 可以根据需要添加其他消息类型的处理
                     }
                 }
             }
             catch (Exception ex)
             {
-                Log.ErrorFormat("消息分发线程异常：{0}", ex.Message);
+                //Log.ErrorFormat("消息分发线程异常：{0}", ex.Message);
+                Log.ErrorFormat("消息分发线程异常：{0}，消息：{1}，来源：{2}，堆栈跟踪：{3}", ex.InnerException, ex.Message, ex.Source, ex.StackTrace);
             }
             finally
             {
@@ -289,5 +339,27 @@ namespace Network
                 Log.Warning("消息分发线程结束");
             }
         }
+
+        /// <summary>
+        /// 获取特定消息类型的相关属性，排除不需要的属性并进行缓存。
+        /// 过滤掉类型为 Google.Protobuf.MessageParser 和 Google.Protobuf.Reflection.MessageDescriptor 的属性
+        /// </summary>
+        /// <param name="messageType">消息类型。</param>
+        /// <returns>相关属性的数组。</returns>
+        private PropertyInfo[] GetRelevantProperties(Type messageType)
+        {
+            if (!relevantPropertiesCache.TryGetValue(messageType, out var properties))
+            {
+                properties = messageType.GetProperties()
+                    .Where(p =>
+                        p.PropertyType != typeof(Google.Protobuf.Reflection.MessageDescriptor) &&
+                        !(p.PropertyType.IsGenericType &&
+                          p.PropertyType.GetGenericTypeDefinition() == typeof(Google.Protobuf.MessageParser<>)))
+                    .ToArray();
+                relevantPropertiesCache[messageType] = properties;
+            }
+            return properties;
+        }
+
     }
 }
