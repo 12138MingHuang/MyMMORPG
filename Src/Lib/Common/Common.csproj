@@ -77,4 +77,9 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(TargetDir)$(TargetFileName)" "$(ProjectDir)bin\Debug" /Y
+xcopy "$(TargetDir)$(TargetFileName)" "$(ProjectDir)..\..\Client\Assets\Plugins\References" /Y
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
