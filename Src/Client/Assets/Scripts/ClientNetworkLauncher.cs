@@ -13,7 +13,6 @@ public class ClientNetworkLauncher : MonoBehaviour
 
         NetMessage msg = new NetMessage();
         msg.Request = new NetMessageRequest();
-        msg.Response = new NetMessageResponse();
 
         // 测试客户端发消息
         msg.Request.MyFirstRequest = new FirstTestRequest();
