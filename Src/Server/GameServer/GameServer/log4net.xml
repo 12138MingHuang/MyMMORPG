@@ -40,8 +40,8 @@
 		<staticLogFileName value="true" />
 		<!-- 配置日志输出格式 -->
 		<layout type="log4net.Layout.PatternLayout">
-			<!--<conversionPattern value="%date [%2thread] %-5level %logger (%file:%line): %message%newline" />-->
-			<conversionPattern value="%date [%2thread] %-5level %logger (%location): %message%newline" />
+			<conversionPattern value="%date [%2thread] %-5level %logger (%file:%line): %message%newline" />
+			<!--<conversionPattern value="%date [%2thread] %-5level %logger (%location): %message%newline" />-->
 		</layout>
 		<!-- 设置日志文件编码为UTF-8 -->
 		<encoding value="utf-8" />
@@ -63,8 +63,8 @@
 		<param name="MaxSizeRollBackups" value="100" />
 		<!-- 配置日志输出格式 -->
 		<layout type="log4net.Layout.PatternLayout">
-			<!--<conversionPattern value="%date [%2thread] %-5level %logger (%file:%line): %message%newline" />-->
-			<conversionPattern value="%date [%2thread] %-5level %logger (%location): %message%newline" />
+			<conversionPattern value="%date [%2thread] %-5level %logger (%file:%line): %message%newline" />
+			<!--<conversionPattern value="%date [%2thread] %-5level %logger (%location): %message%newline" />-->
 		</layout>
 		<!-- 设置日志文件编码为UTF-8 -->
 		<encoding value="utf-8" />
