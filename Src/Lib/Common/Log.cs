@@ -1,4 +1,10 @@
-﻿using System;
+﻿/// <summary>
+/// 通过定义 INCLUDE_CALL_INFO 预处理符号，你可以控制是否包括调用信息。
+/// 要启用或禁用调用信息，可以添加或移除 INCLUDE_CALL_INFO 预处理符号。
+/// </summary>
+//#define INCLUDE_CALL_INFO
+
+using System;
 using System.Runtime.CompilerServices;
 using log4net;
 
@@ -71,9 +77,13 @@ namespace Common
                                        [CallerLineNumber] int lineNumber = 0,
                                        [CallerMemberName] string memberName = "")
         {
+#if INCLUDE_CALL_INFO
+            string logMessage = $"{message} (at {filePath}:{lineNumber} in {memberName})";
+#else
+            string logMessage = $"{message}";
+#endif
             LazyLoadLogger();
             EnsureLoggerInitialized();
-            string logMessage = $"{message} (at {filePath}:{lineNumber} in {memberName})";
 
             try
             {
