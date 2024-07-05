@@ -10,6 +10,7 @@ namespace Common
     public static class Log
     {
         private static ILog log;
+        private static readonly object lockObj = new object();
 
         /// <summary>
         /// 初始化日志记录器。
@@ -17,7 +18,44 @@ namespace Common
         /// <param name="name">日志记录器的名称。</param>
         public static void Init(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentNullException(nameof(name), "Logger name cannot be null or empty.");
+            }
             log = LogManager.GetLogger(name);
+        }
+
+        /// <summary>
+        /// 检查日志记录器是否已初始化。
+        /// 如果未初始化，则抛出 InvalidOperationException 异常。
+        /// 在每次记录日志之前调用 EnsureLoggerInitialized 方法，检查日志记录器是否已初始化。如果未初始化，则抛出异常
+        /// </summary>
+        private static void EnsureLoggerInitialized()
+        {
+            if (log == null)
+            {
+                throw new InvalidOperationException("Logger is not initialized. Call Init() method first.");
+            }
+        }
+
+        /// <summary>
+        /// 懒加载日志记录器。
+        /// 如果日志记录器未初始化，则初始化它。
+        /// 在日志记录器未初始化时自动调用 Init 方法进行初始化。
+        /// 使用 lock 确保日志记录器的初始化是线程安全的。
+        /// </summary>
+        private static void LazyLoadLogger()
+        {
+            if (log == null)
+            {
+                lock (lockObj)
+                {
+                    if (log == null)
+                    {
+                        Init("DefaultLogger");
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -33,24 +71,35 @@ namespace Common
                                        [CallerLineNumber] int lineNumber = 0,
                                        [CallerMemberName] string memberName = "")
         {
+            LazyLoadLogger();
+            EnsureLoggerInitialized();
             string logMessage = $"{message} (at {filePath}:{lineNumber} in {memberName})";
-            switch (level)
+
+            try
             {
-                case LogLevel.Info:
-                    log.Info(logMessage);
-                    break;
-                case LogLevel.Warn:
-                    log.Warn(logMessage);
-                    break;
-                case LogLevel.Error:
-                    log.Error(logMessage);
-                    break;
-                case LogLevel.Fatal:
-                    log.Fatal(logMessage);
-                    break;
-                case LogLevel.Debug:
-                    log.Debug(logMessage);
-                    break;
+                switch (level)
+                {
+                    case LogLevel.Info:
+                        log.Info(logMessage);
+                        break;
+                    case LogLevel.Warn:
+                        log.Warn(logMessage);
+                        break;
+                    case LogLevel.Error:
+                        log.Error(logMessage);
+                        break;
+                    case LogLevel.Fatal:
+                        log.Fatal(logMessage);
+                        break;
+                    case LogLevel.Debug:
+                        log.Debug(logMessage);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                // 处理日志记录中的异常
+                Console.Error.WriteLine($"Failed to log message: {ex.Message}");
             }
         }
 
@@ -168,5 +217,4 @@ namespace Common
         /// </summary>
         Debug
     }
-
 }
