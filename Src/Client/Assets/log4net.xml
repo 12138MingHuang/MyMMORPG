@@ -7,13 +7,13 @@
 		</logger>
 		<appender name="UnityLog" type="log4net.Appender.RollingFileAppender">
 			<!-- 设置日志文件的存放目录 -->
-			<param name="File" value="D:\\MyUnityProject\\MyMMORPG\\Src\\Client\\Log\\" />
+			<param name="File" value="Logs/" />
 			<!-- 设置为 true，表示日志追加到现有文件中 -->
 			<param name="appendToFile" value="true" />
 			<!-- 设置日志文件的滚动方式为按日期滚动 -->
 			<param name="rollingStyle" value="Date" />
 			<!-- 设置日志文件名的日期格式 -->
-			<param name="datePattern" value="yyyyMMdd'.txt'" />
+			<param name="datePattern" value="yyyyMMdd'.log'" />
 			<!-- 设置日志文件名不为静态 -->
 			<param name="staticLogFileName" value="false" />
 			<!-- 设置最大的备份日志文件的数量 -->
