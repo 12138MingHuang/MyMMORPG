@@ -12,7 +12,10 @@ public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     /// <summary>
     /// 指示该单例是否在场景切换时保持不被销毁。
     /// </summary>
-    public bool global = true;
+    [SerializeField]
+    [Tooltip("指示该单例是否在场景切换时保持不被销毁。")]
+    [Header("该单例是否在场景切换时保持不被销毁")]
+    private bool global = true;
 
     // 静态实例变量
     private static T instance;
