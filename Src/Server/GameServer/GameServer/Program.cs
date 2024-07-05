@@ -13,13 +13,13 @@ namespace GameServer
             try
             {
                 // 使用相对路径加载log4net配置文件
-                string configFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.xml");
-                FileInfo fi = new FileInfo(configFilePath);
+                string log4netConfigPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.xml");
+                FileInfo fi = new FileInfo(log4netConfigPath);
 
                 // 检查log4net配置文件是否存在
                 if (!fi.Exists)
                 {
-                    Log.Info("log4net.xml 配置文件不存在: " + configFilePath);
+                    Log.Info("log4net.xml 配置文件不存在: " + log4netConfigPath);
                     return;
                 }
 
